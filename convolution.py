@@ -103,8 +103,15 @@ if recorded_signal:
 
     x = recorded_signal[:chunksize]
     
-    # فلتر نفس طول x
+    # Generate time vector for the x-axis (in seconds)
+    time_axis = np.arange(chunksize) / samplerate  # Time in seconds
+
+    # Random Filter with same size of x
     h = np.random.uniform(-0.5, 0.5, size=chunksize)
+
+    # # Moving average filter (simple low-pass)
+    # h = np.ones(50) / 50  # Averaging over 50 samples
+    # h = np.pad(h, (0, chunksize - len(h)))  # Pad to match chunksize
     
     # Manual convolution
     manual_result = convolution(x, h, chunksize)
@@ -113,19 +120,21 @@ if recorded_signal:
     # === Plot ===
     fig, axs = plt.subplots(3, 1, figsize=(12, 10))
 
-    axs[0].plot(x, color='blue')
+    axs[0].plot(time_axis, x, color='blue')  # Plot with time on the x-axis
     axs[0].set_title("Original Signal x")
+    axs[0].set_xlabel("Time (seconds)")
     axs[0].set_ylabel("Amplitude")
     axs[0].grid()
 
-    axs[1].plot(h, color='green')
+    axs[1].plot(time_axis, h[:len(time_axis)], color='green')  # Ensure h is same length as time_axis
     axs[1].set_title("Filter h")
+    axs[1].set_xlabel("Time (seconds)")
     axs[1].set_ylabel("Amplitude")
     axs[1].grid()
 
-    axs[2].plot(manual_result, color='red')
+    axs[2].plot(time_axis, manual_result, color='red')  # Plot the convolved result with time
     axs[2].set_title("Convolved Signal (x * h)")
-    axs[2].set_xlabel("Sample")
+    axs[2].set_xlabel("Time (seconds)")
     axs[2].set_ylabel("Amplitude")
     axs[2].grid()
 
@@ -134,5 +143,3 @@ if recorded_signal:
 
 else:
     print("No signal was recorded.")
-
-
